@@ -300,7 +300,7 @@ document.querySelectorAll('.hotspot').forEach(h => {
 
     function up() {
       dragging = false;
-      saveData();
+     
       document.removeEventListener('mousemove', move);
       document.removeEventListener('mouseup', up);
     }
@@ -345,7 +345,7 @@ pop.addEventListener("blur", saveData);
   document.querySelector(".map-container").appendChild(h);
   document.querySelector(".map-container").appendChild(pop);
  
-  saveData();
+
   adding = false;
 });
 
@@ -371,8 +371,12 @@ function loadData() {
 
   // xoá điểm cũ
 
+async function loadFromFirebase() {
+  const snap = await getDocs(collection(db, "hotspots"));
 
-  data.forEach(d => {
+  snap.forEach(doc => {
+    const d = doc.data();
+
     const h = document.createElement("div");
     h.className = "hotspot";
     h.style.left = d.left;
@@ -383,21 +387,22 @@ function loadData() {
     pop.style.left = d.left;
     pop.style.top = d.top;
     pop.innerHTML = d.html;
-    pop.contentEditable = "true";
-    pop.addEventListener("blur", saveData);
 
     h.onclick = e => {
       e.stopPropagation();
       document.querySelectorAll(".popup").forEach(p => {
         if (p !== pop) p.style.display = "none";
       });
-      pop.style.display = (pop.style.display === "block") ? "none" : "block";
+      pop.style.display =
+        pop.style.display === "block" ? "none" : "block";
     };
 
     map.appendChild(h);
     map.appendChild(pop);
   });
 }
+
+
 window.addEventListener("load", loadData);
 </script>
 
@@ -405,6 +410,7 @@ window.addEventListener("load", loadData);
 
 
 </html>
+
 
 
 
