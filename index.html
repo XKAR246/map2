@@ -63,7 +63,7 @@
     display: none;
     max-width: 220px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    z-index: 10;
+    z-index: 999;
   }
 </style>
 </head>
@@ -111,7 +111,7 @@
   <div class="hotspot" style="top:60%; left: 40%;" onclick="showPopup(event,'p3')"></div>
   <div class="popup" id="p3" style="top:60%; left: 40%;">
     <b style="color:red; text-decoration: underline;">Phong Quang</b><br>
-    CHT: 3//Nguyễn Anh Duy<br>
+    CHT: 3//Triệu Quang Duy<br>
     pCHT: 2// Trịnh Văn Cường<br>
     CTVP: 1// Lục Huy Hào<br>
     TLTC:<br>
@@ -187,7 +187,7 @@
     <b style="color:red; text-decoration: underline;">Thanh Mai</b><br>
     CHT: <br>
     pCHT: <br>
-    CTVP: 4/ Triệu Văn Namp<br>
+    CTVP: 4/ Triệu Văn Nam<br>
     TLTC: 1// Vừ Văn Nguyễn<br>
     TLQL:<br>
     TLCT:<br>
@@ -313,10 +313,8 @@ let adding = false;
 
 document.getElementById("addBtn").onclick = () => {
   adding = true;
-  alert("Click vào vị trí trên ảnh để thêm chú thích");
+  alert("Click vào bản đồ để thêm hotspot");
 };
-
-let count = document.querySelectorAll(".hotspot").length + 1;
 
 document.querySelector(".map-container").addEventListener("click", e => {
   if (!adding) return;
@@ -325,51 +323,32 @@ document.querySelector(".map-container").addEventListener("click", e => {
   const left = ((e.clientX - rect.left) / rect.width * 100).toFixed(1) + "%";
   const top  = ((e.clientY - rect.top) / rect.height * 100).toFixed(1) + "%";
 
-  const id = "p" + count++;
-
   const h = document.createElement("div");
   h.className = "hotspot";
   h.style.left = left;
   h.style.top = top;
-  h.setAttribute("onclick", `showPopup(event,'${id}')`);
 
   const pop = document.createElement("div");
   pop.className = "popup";
-  pop.id = id;
   pop.style.left = left;
   pop.style.top = top;
   pop.innerHTML = popupTemplate;
   pop.contentEditable = "true";
-pop.addEventListener("blur", saveData);
+
+  h.onclick = ev => {
+    ev.stopPropagation();
+    document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
+    pop.style.display = "block";
+  };
 
   document.querySelector(".map-container").appendChild(h);
   document.querySelector(".map-container").appendChild(pop);
- 
 
   adding = false;
 });
+</script>
 
-function saveData() {
-  const data = [];
-  document.querySelectorAll(".hotspot").forEach((h, i) => {
-    const pop = document.querySelectorAll(".popup")[i];
-    data.push({
-      left: h.style.left,
-      top: h.style.top,
-      html: pop.innerHTML
-    });
-  });
-  localStorage.setItem("mapData", JSON.stringify(data));
-}
 
-function loadData() {
-  const raw = localStorage.getItem("mapData");
-  if (!raw) return;
-
-  const data = JSON.parse(raw);
-  const map = document.querySelector(".map-container");
-
-  // xoá điểm cũ
 
 async function loadFromFirebase() {
   const snap = await getDocs(collection(db, "hotspots"));
@@ -410,6 +389,7 @@ window.addEventListener("load", loadFromFirebase);
 
 
 </html>
+
 
 
 
