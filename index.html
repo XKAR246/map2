@@ -81,6 +81,29 @@
 <div class="map-container">
   <img src="anh.jpg" alt="Bản đồ">
 </div>
+
+ <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "XXX",
+  authDomain: "XXX",
+  projectId: "map2-58d21"
+};
+
+  const map = document.querySelector(".map-container");
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.db = db;
+window.getDocs = getDocs;
+window.collection = collection;
+window.addDoc = addDoc;
+</script>
+
 <script>
 
   const popupTemplate = `
@@ -153,6 +176,12 @@ let adding = false;
 document.getElementById("addBtn").onclick = () => {
   adding = true;
   alert("Click vào bản đồ để thêm hotspot");
+ await addDoc(collection(db, "hotspots"), {
+  left,
+  top,
+  html: popupTemplate
+});
+
 };
 
 document.querySelector(".map-container").addEventListener("click", e => {
@@ -187,17 +216,11 @@ document.querySelector(".map-container").addEventListener("click", e => {
 });
 </script>
 
-
-
 async function loadFromFirebase() {
- map.querySelectorAll(".hotspot, .popup").forEach(e => e.remove());
+  map.querySelectorAll(".hotspot, .popup").forEach(e => e.remove());
 
   const snap = await getDocs(collection(db, "hotspots"));
-await addDoc(collection(db, "hotspots"), {
-  left,
-  top,
-  html: pop.innerHTML
-});
+
   snap.forEach(doc => {
     const d = doc.data();
 
@@ -211,6 +234,7 @@ await addDoc(collection(db, "hotspots"), {
     pop.style.left = d.left;
     pop.style.top = d.top;
     pop.innerHTML = d.html;
+    pop.contentEditable = "true";
 
     h.onclick = e => {
       e.stopPropagation();
@@ -226,6 +250,9 @@ await addDoc(collection(db, "hotspots"), {
   });
 }
 
+window.addEventListener("load", loadFromFirebase);
+
+
 
 window.addEventListener("load", loadFromFirebase);
 </script>
@@ -234,6 +261,7 @@ window.addEventListener("load", loadFromFirebase);
 
 
 </html>
+
 
 
 
