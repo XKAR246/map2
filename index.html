@@ -151,46 +151,6 @@ document.getElementById("addBtn").onclick = () => {
   alert("Click vào bản đồ để thêm hotspot");
 };
 
-};
-
-document.querySelector(".map-container").addEventListener("click", async e => {
-  if (!adding) return;
-
-  const rect = e.currentTarget.getBoundingClientRect();
-  const left = ((e.clientX - rect.left) / rect.width * 100).toFixed(1) + "%";
-  const top  = ((e.clientY - rect.top) / rect.height * 100).toFixed(1) + "%";
-
-  // 🔥 LƯU FIREBASE
-  await addDoc(collection(db, "hotspots"), {
-    left,
-    top,
-    html: popupTemplate
-  });
-
-  // 🔥 VẼ HOTSPOT NGAY
-  const h = document.createElement("div");
-  h.className = "hotspot";
-  h.style.left = left;
-  h.style.top = top;
-
-  const pop = document.createElement("div");
-  pop.className = "popup";
-  pop.style.left = left;
-  pop.style.top = top;
-  pop.innerHTML = popupTemplate;
-  pop.contentEditable = "true";
-
-  h.onclick = ev => {
-    ev.stopPropagation();
-    document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
-    pop.style.display = "block";
-  };
-
-  map.appendChild(h);
-  map.appendChild(pop);
-
-  adding = false;
-});
 document.querySelector(".map-container").addEventListener("click", async e => {
   if (!adding) return;
 
@@ -230,14 +190,44 @@ document.querySelector(".map-container").addEventListener("click", async e => {
   adding = false;
 });
 
+  const rect = e.currentTarget.getBoundingClientRect();
+  const left = ((e.clientX - rect.left) / rect.width * 100).toFixed(1) + "%";
+  const top  = ((e.clientY - rect.top) / rect.height * 100).toFixed(1) + "%";
 
-  document.querySelector(".map-container").appendChild(h);
-  document.querySelector(".map-container").appendChild(pop);
+  // 🔥 LƯU FIREBASE
+  await addDoc(collection(db, "hotspots"), {
+    left,
+    top,
+    html: popupTemplate
+  });
+
+  // 🔥 VẼ HOTSPOT NGAY
+  const h = document.createElement("div");
+  h.className = "hotspot";
+  h.style.left = left;
+  h.style.top = top;
+
+  const pop = document.createElement("div");
+  pop.className = "popup";
+  pop.style.left = left;
+  pop.style.top = top;
+  pop.innerHTML = popupTemplate;
+  pop.contentEditable = "true";
+
+  h.onclick = ev => {
+    ev.stopPropagation();
+    document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
+    pop.style.display = "block";
+  };
+
+  map.appendChild(h);
+  map.appendChild(pop);
 
   adding = false;
 });
+
+
 </script>
-
 async function loadFromFirebase() {
   map.querySelectorAll(".hotspot, .popup").forEach(e => e.remove());
 
@@ -273,13 +263,13 @@ async function loadFromFirebase() {
 }
 
 window.addEventListener("load", loadFromFirebase);
-
 </script>
 
 </body>
 
 
 </html>
+
 
 
 
