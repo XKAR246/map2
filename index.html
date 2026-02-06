@@ -130,18 +130,6 @@ function closeAll() {
   document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
 }
 </script>
-<script>
-
-
-    function up() {
-      dragging = false;
-     
-      document.removeEventListener('mousemove', move);
-      document.removeEventListener('mouseup', up);
-    }
-  });
-});
-</script>
 
 <script>
 let adding = false;
@@ -154,10 +142,6 @@ document.getElementById("addBtn").onclick = () => {
 document.querySelector(".map-container").addEventListener("click", async e => {
   if (!adding) return;
 
-  const rect = e.currentTarget.getBoundingClientRect();
-  const left = ((e.clientX - rect.left) / rect.width * 100).toFixed(1) + "%";
-  const top  = ((e.clientY - rect.top) / rect.height * 100).toFixed(1) + "%";
-
   // 🔥 LƯU FIREBASE
   await addDoc(collection(db, "hotspots"), {
     left,
@@ -227,7 +211,7 @@ document.querySelector(".map-container").addEventListener("click", async e => {
 });
 
 
-</script>
+
 async function loadFromFirebase() {
   map.querySelectorAll(".hotspot, .popup").forEach(e => e.remove());
 
@@ -246,13 +230,11 @@ async function loadFromFirebase() {
     pop.style.left = d.left;
     pop.style.top = d.top;
     pop.innerHTML = d.html;
-    pop.contentEditable = "true";
+    pop.contentEditable = true;
 
     h.onclick = e => {
       e.stopPropagation();
-      document.querySelectorAll(".popup").forEach(p => {
-        if (p !== pop) p.style.display = "none";
-      });
+      document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
       pop.style.display =
         pop.style.display === "block" ? "none" : "block";
     };
@@ -263,12 +245,14 @@ async function loadFromFirebase() {
 }
 
 window.addEventListener("load", loadFromFirebase);
+
 </script>
 
 </body>
 
 
 </html>
+
 
 
 
