@@ -174,12 +174,10 @@ document.querySelector(".map-container").addEventListener("click", async e => {
 
 
 async function loadFromFirebase() {
-  map.querySelectorAll(".hotspot, .popup").forEach(e => e.remove());
-
   const snap = await getDocs(collection(db, "hotspots"));
-
-  snap.forEach(doc => {
-    const d = doc.data();
+  snap.forEach(docSnap => {
+    const d = docSnap.data();
+    const id = docSnap.id; // ⭐ RẤT QUAN TRỌNG
 
     const h = document.createElement("div");
     h.className = "hotspot";
@@ -191,19 +189,46 @@ async function loadFromFirebase() {
     pop.style.left = d.left;
     pop.style.top = d.top;
     pop.innerHTML = d.html;
-    pop.contentEditable = true;
+   const del = document.createElement("button");
+del.textContent = "❌ Xoá";
+del.style.display = "block";
+del.style.marginTop = "6px";
+del.style.background = "red";
+del.style.color = "white";
+del.style.border = "none";
+del.style.cursor = "pointer";
+
+del.onclick = async e => {
+  e.stopPropagation();
+  if (!confirm("Xoá hotspot này?")) return;
+
+  await deleteDoc(doc(db, "hotspots", id));
+  h.remove();
+  pop.remove();
+};
+
+pop.appendChild(del);
+
+    pop.contentEditable = "true";
+
+    // ⭐ LƯU KHI SỬA
+    pop.addEventListener("blur", async () => {
+      await updateDoc(doc(db, "hotspots", id), {
+        html: pop.innerHTML
+      });
+    });
 
     h.onclick = e => {
       e.stopPropagation();
       document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
-      pop.style.display =
-        pop.style.display === "block" ? "none" : "block";
+      pop.style.display = "block";
     };
 
     map.appendChild(h);
     map.appendChild(pop);
   });
 }
+
 
 window.addEventListener("load", loadFromFirebase);
 
@@ -213,6 +238,7 @@ window.addEventListener("load", loadFromFirebase);
 
 
 </html>
+
 
 
 
