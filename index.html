@@ -189,23 +189,7 @@ async function loadFromFirebase() {
     pop.style.left = d.left;
     pop.style.top = d.top;
     pop.innerHTML = d.html;
-   const del = document.createElement("button");
-del.textContent = "❌ Xoá";
-del.style.display = "block";
-del.style.marginTop = "6px";
-del.style.background = "red";
-del.style.color = "white";
-del.style.border = "none";
-del.style.cursor = "pointer";
-
-del.onclick = async e => {
-  e.stopPropagation();
-  if (!confirm("Xoá hotspot này?")) return;
-
-  await deleteDoc(doc(db, "hotspots", id));
-  h.remove();
-  pop.remove();
-};
+   
 
 pop.appendChild(del);
 
@@ -238,6 +222,7 @@ window.addEventListener("load", loadFromFirebase);
 
 
 </html>
+
 
 
 
