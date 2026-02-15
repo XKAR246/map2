@@ -64,7 +64,8 @@
     display: none;
     max-width: 220px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    z-index: 999;
+    z-index: 1000;
+    word-wrap: break-word;
   }
 </style>
 </head>
@@ -219,8 +220,6 @@ async function loadFromFirebase() {
     pop.style.left = d.left;
     pop.style.top = d.top;
     pop.innerHTML = d.html;
-   
-
     pop.contentEditable = "true";
 
     // ⭐ LƯU KHI SỬA
@@ -230,22 +229,22 @@ async function loadFromFirebase() {
       });
     });
 
-    h.onclick = async e => {
-  e.stopPropagation();
+    h.onclick = (e) => {
+      e.stopPropagation();
 
-  // 🔥 NẾU ĐANG CHẾ ĐỘ XOÁ
-  if (deleting) {
-    if (!confirm("Xoá hotspot này?")) return;
-    await deleteDoc(doc(db, "hotspots", id));
-    h.remove();
-    pop.remove();
-    return;
-  }
+      // 🔥 NẾU ĐANG CHẾ ĐỘ XOÁ
+      if (deleting) {
+        if (!confirm("Xoá hotspot này?")) return;
+        deleteDoc(doc(db, "hotspots", id));
+        h.remove();
+        pop.remove();
+        return;
+      }
 
-  // bật / tắt popup
-  document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
-  pop.style.display = "block";
-};
+      // bật / tắt popup
+      document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
+      pop.style.display = "block";
+    };
 map.appendChild(h);
 map.appendChild(pop);
 });
