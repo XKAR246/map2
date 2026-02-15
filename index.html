@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -78,7 +79,16 @@
   ➕ Thêm chú thích
 </button>
 <button id="deleteBtn"
-        style="position:fixed;top:50px;right:10px;z-index:999;">
+        style="position:fixed;
+               top:50px;
+               right:10px;
+               z-index:9999;
+               padding:6px 12px;
+               font-size:14px;
+               background-color:#fff;
+               border:2px solid #ccc;
+               border-radius:4px;
+               cursor:pointer;">
   ❌ Xoá hotspot
 </button>
 
@@ -86,7 +96,10 @@
   <img src="anh.jpg" alt="Bản đồ">
 </div>
 
- <script type="module">
+<script type="module">
+import { 
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { 
   getFirestore, 
   collection, 
@@ -103,8 +116,6 @@ const firebaseConfig = {
   projectId: "map2-58d21"
 };
 
-  
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -112,11 +123,13 @@ window.db = db;
 window.getDocs = getDocs;
 window.collection = collection;
 window.addDoc = addDoc;
+window.updateDoc = updateDoc;
+window.deleteDoc = deleteDoc;
+window.doc = doc;
 </script>
 
 <script>
-
-  const popupTemplate = `
+const popupTemplate = `
 <b style="color:red; text-decoration: underline;">TÊN ĐƠN VỊ</b><br>
 CHT: <br>
 pCHT: <br>
@@ -127,15 +140,7 @@ TLCT: <br>
 NVCM: <br>
 `;
 
-
-function closeAll() {
-  document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
-}
-</script>
 const map = document.querySelector(".map-container");
-
-<script>
- const map = document.querySelector(".map-container");
  
 let adding = false;
 let deleting = false;
@@ -143,7 +148,9 @@ let deleting = false;
 deleteBtn.onclick = () => {
   deleting = !deleting;
   adding = false;
-  deleteBtn.style.background = deleting ? "red" : "";
+  deleteBtn.style.backgroundColor = deleting ? "#ff4444" : "#fff";
+  deleteBtn.style.color = deleting ? "#fff" : "#000";
+  deleteBtn.style.borderColor = deleting ? "#ff4444" : "#ccc";
 };
  
 document.getElementById("addBtn").onclick = () => {
@@ -252,29 +259,3 @@ window.addEventListener("load", loadFromFirebase);
 
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
