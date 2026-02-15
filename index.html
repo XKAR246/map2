@@ -87,9 +87,15 @@
 </div>
 
  <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc } 
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { 
+  getFirestore, 
+  collection, 
+  getDocs, 
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAdWO3jQrzvJya_ljuBuZvhfTFOhsjdo1o",
@@ -97,7 +103,7 @@ const firebaseConfig = {
   projectId: "map2-58d21"
 };
 
-  const map = document.querySelector(".map-container");
+  
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -152,11 +158,13 @@ document.querySelector(".map-container").addEventListener("click", async e => {
   const top  = ((e.clientY - rect.top) / rect.height * 100).toFixed(1) + "%";
 
   // 🔥 LƯU FIREBASE
-  await addDoc(collection(db, "hotspots"), {
-    left,
-    top,
-    html: popupTemplate
-  });
+  const docRef = await addDoc(collection(db, "hotspots"), {
+  left,
+  top,
+  html: popupTemplate
+});
+
+const id = docRef.id;
 
   // 🔥 VẼ HOTSPOT NGAY
   const h = document.createElement("div");
@@ -206,8 +214,6 @@ async function loadFromFirebase() {
     pop.innerHTML = d.html;
    
 
-pop.appendChild(del);
-
     pop.contentEditable = "true";
 
     // ⭐ LƯU KHI SỬA
@@ -233,7 +239,10 @@ pop.appendChild(del);
   document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
   pop.style.display = "block";
 };
-
+map.appendChild(h);
+map.appendChild(pop);
+});
+}
 
 window.addEventListener("load", loadFromFirebase);
 
@@ -243,6 +252,7 @@ window.addEventListener("load", loadFromFirebase);
 
 
 </html>
+
 
 
 
