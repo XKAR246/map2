@@ -77,6 +77,10 @@
                font-size:14px;">
   ➕ Thêm chú thích
 </button>
+<button id="deleteBtn"
+        style="position:fixed;top:50px;right:10px;z-index:999;">
+  ❌ Xoá hotspot
+</button>
 
 <div class="map-container">
   <img src="anh.jpg" alt="Bản đồ">
@@ -128,7 +132,14 @@ const map = document.querySelector(".map-container");
  const map = document.querySelector(".map-container");
  
 let adding = false;
+let deleting = false;
 
+deleteBtn.onclick = () => {
+  deleting = !deleting;
+  adding = false;
+  deleteBtn.style.background = deleting ? "red" : "";
+};
+ 
 document.getElementById("addBtn").onclick = () => {
   adding = true;
   alert("Click vào bản đồ để thêm hotspot");
@@ -159,7 +170,11 @@ document.querySelector(".map-container").addEventListener("click", async e => {
   pop.style.top = top;
   pop.innerHTML = popupTemplate;
   pop.contentEditable = "true";
-
+pop.addEventListener("blur", async () => {
+  await updateDoc(doc(db, "hotspots", id), {
+    html: pop.innerHTML
+  });
+});
   h.onclick = ev => {
     ev.stopPropagation();
     document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
@@ -202,16 +217,22 @@ pop.appendChild(del);
       });
     });
 
-    h.onclick = e => {
-      e.stopPropagation();
-      document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
-      pop.style.display = "block";
-    };
+    h.onclick = async e => {
+  e.stopPropagation();
 
-    map.appendChild(h);
-    map.appendChild(pop);
-  });
-}
+  // 🔥 NẾU ĐANG CHẾ ĐỘ XOÁ
+  if (deleting) {
+    if (!confirm("Xoá hotspot này?")) return;
+    await deleteDoc(doc(db, "hotspots", id));
+    h.remove();
+    pop.remove();
+    return;
+  }
+
+  // bật / tắt popup
+  document.querySelectorAll(".popup").forEach(p => p.style.display = "none");
+  pop.style.display = "block";
+};
 
 
 window.addEventListener("load", loadFromFirebase);
@@ -222,6 +243,7 @@ window.addEventListener("load", loadFromFirebase);
 
 
 </html>
+
 
 
 
